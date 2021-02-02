@@ -16,7 +16,7 @@
 #include "pcnml/ThirdAlgorithm/ThirdAlgorithm.h"
 
 
-int start_from;
+int start_from = 1; //下标从1开始
 
 //X::operator bool (){}
 
@@ -214,8 +214,19 @@ void GET_BEST_KERNAL(){
 
 }
 
+#include <cstdio>
 //the end of path need the char '/'
 void TEST(std::string path, int K){
+  system(("mkdir " + path+"result").c_str());
+  system(("mkdir " + path+"result/ANGLEWEIGHTED").c_str());
+  system(("mkdir " + path+"result/AREAWEIGHTED").c_str());
+  system(("mkdir " + path+"result/FLAS").c_str());
+  system(("mkdir " + path+"result/LINEMOD").c_str());
+  system(("mkdir " + path+"result/PLANEPCA").c_str());
+  system(("mkdir " + path+"result/PLANESVD").c_str());
+  system(("mkdir " + path+"result/SRI").c_str());
+  system(("mkdir " + path+"result/VECTORSVD").c_str());
+
   std::string param = path + "params.txt";
   cv::Matx33d camera(0,0,0,0,0,0,0,0,1);
   cv::Mat range_image;
@@ -259,13 +270,13 @@ void TEST(std::string path, int K){
   std::vector<int> compression_params;
   compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
   compression_params.push_back(100);
-  cv::rgbd::RgbdNormals FLAS(768, 1024, CV_32F, camera, 3,
+  cv::rgbd::RgbdNormals FLAS(480, 640, CV_32F, camera, 3,
                              cv::rgbd::RgbdNormals::RGBD_NORMALS_METHOD_FALS);
   FLAS.initialize();
-  cv::rgbd::RgbdNormals SRI(768, 1024, CV_32F, camera, 3,
+  cv::rgbd::RgbdNormals SRI(480, 640, CV_32F, camera, 3,
                             cv::rgbd::RgbdNormals::RGBD_NORMALS_METHOD_SRI);
   SRI.initialize();
-  cv::rgbd::RgbdNormals LINEMOD(768, 1024, CV_32F, camera, 3,
+  cv::rgbd::RgbdNormals LINEMOD(480, 640, CV_32F, camera, 3,
                                 cv::rgbd::RgbdNormals::RGBD_NORMALS_METHOD_LINEMOD);
   LINEMOD.initialize();
 
@@ -309,10 +320,10 @@ void TEST(std::string path, int K){
     makeoutput();\
     cv::imwrite(path+"result/" + #METHOD + "/" + file_name.str() + ".png" , output, compression_params);
     MAKE_CLOCK(PLANESVD);
-    //MAKE_CLOCK(VECTORSVD);
-    //MAKE_CLOCK(AREAWEIGHTED);
-    //MAKE_CLOCK(ANGLEWEIGHTED);
-    //MAKE_CLOCK(PLANEPCA);
+    MAKE_CLOCK(VECTORSVD);
+    MAKE_CLOCK(AREAWEIGHTED);
+    MAKE_CLOCK(ANGLEWEIGHTED);
+    MAKE_CLOCK(PLANEPCA);
 //MAKE_CLOCK(QUADSVD); 废弃
 //MAKE_CLOCK(QUADTRANSSVD);  废弃
 #undef MAKE_CLOCK
@@ -324,9 +335,9 @@ void TEST(std::string path, int K){
     time_##METHOD.push_back((clock() - start_time) / CLOCKS_PER_SEC);\
     makeoutput();\
     cv::imwrite(path+"result/" + #METHOD + "/" + file_name.str() + ".png" , output, compression_params);
-    //MAKE_CLOCK(FLAS);
-    //MAKE_CLOCK(LINEMOD);
-    //MAKE_CLOCK(SRI);
+    MAKE_CLOCK(FLAS);
+    MAKE_CLOCK(LINEMOD);
+    MAKE_CLOCK(SRI);
 #undef MAKE_CLOCK
 
 #define MAKE_CLOCK(METHOD)\
@@ -335,7 +346,7 @@ void TEST(std::string path, int K){
     time_##METHOD.push_back((clock() - start_time) / CLOCKS_PER_SEC);\
     makeoutput();\
     cv::imwrite(path+"result/" + #METHOD + "/" + file_name.str() + ".png" , output, compression_params);
-    MAKE_CLOCK(R_MEANS_4_8);
+    //MAKE_CLOCK(R_MEANS_4_8);
     //MAKE_CLOCK(R_MEANS_PREWITT);
     //MAKE_CLOCK(R_MEANS_SCHARR);
     //MAKE_CLOCK(R_MEANS_SOBEL);
@@ -366,12 +377,12 @@ void TEST(std::string path, int K){
 // fprintf(f, (std::string(#METHOD)+": %lf\n").c_str(), time_##METHOD);
 
   SAVE_RESULT(PLANESVD);
-  //SAVE_RESULT(PLANEPCA);
-  //SAVE_RESULT(VECTORSVD);
-  //SAVE_RESULT(AREAWEIGHTED);
-  //SAVE_RESULT(ANGLEWEIGHTED);
+  SAVE_RESULT(PLANEPCA);
+  SAVE_RESULT(VECTORSVD);
+  SAVE_RESULT(AREAWEIGHTED);
+  SAVE_RESULT(ANGLEWEIGHTED);
 
-  SAVE_RESULT(R_MEANS_4_8);
+  //SAVE_RESULT(R_MEANS_4_8);
   //SAVE_RESULT(R_MEANS_PREWITT);
   //SAVE_RESULT(R_MEANS_SOBEL);
   //SAVE_RESULT(R_MEANS_SCHARR);
@@ -381,9 +392,9 @@ void TEST(std::string path, int K){
   //SAVE_RESULT(R_MEDIAN_SOBEL);
   //SAVE_RESULT(R_MEDIAN_SCHARR);
 
-  //SAVE_RESULT(SRI);
-  //SAVE_RESULT(LINEMOD);
-  //SAVE_RESULT(FLAS);
+  SAVE_RESULT(SRI);
+  SAVE_RESULT(LINEMOD);
+  SAVE_RESULT(FLAS);
 //下面的算法都是我们的
 //SAVE_RESULT(R_MEANS_4);
 //SAVE_RESULT(R_MEDIAN_FAST_8);
@@ -399,11 +410,11 @@ void TEST(std::string path, int K){
 
 int main(int argc, char* argv[]){
 
-  DEV();
+  //DEV();
   //TEST();
   //start_from = atoi(argv[2]);
   //TEST(argv[1], 10);
-  //TEST("/media/bohuan/data/dataset/pcnml/easy/torus/", 10);
+  TEST("/home/zpmc/bohuan/for_paper/Easy/boat/", 10); //记得路径结尾有 /
   //TEST("/media/bohuan/data/dataset/pcnml/easy/torusknot/", 10);
 
   //TEST("/media/bohuan/data/dataset/pcnml/easy/debug/torusknot/", 10);
