@@ -60,7 +60,7 @@ RIN root;
 LoadHPP *lppp;
 
 void DEV(){
-  std::string path = "/media/bohuan/data/dataset/pcnml/easy/torusknot/";
+  std::string path = "/home/zpmc/bohuan/for_paper/aa/";
   std::string param = path + "params.txt";
   cv::Matx33d camera(0,0,0,0,0,0,0,0,1);
   cv::Mat range_image;
@@ -82,13 +82,19 @@ void DEV(){
   compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
   compression_params.push_back(100);
 
-  for (int i = 1; i <= 1;  i += 1){
+  for (int i = 1; i <= 2;  i += 1){
     std::cout<<i<<std::endl;
     std::stringstream file_name;
     file_name<< std::setw(6) << std::setfill('0') << i ;
     lppp = new LoadHPP();
     LoadHPP &lpp = *lppp;
-    auto depth_image = lpp.LoadDepthImage((path + "depth/" + file_name.str()+".bin").c_str(), 640, 480);
+    //读入bin文件
+    //auto depth_image = lpp.LoadDepthImage((path + "depth/" + file_name.str()+".bin").c_str(), 640, 480);
+
+    //读入png文件
+    auto depth_image = lpp.LoadDepthImagePng((path + "depth/" + file_name.str()+".png").c_str(), 640, 480);
+
+
     cv::Mat_<float> s(depth_image);
     for (auto &it : s){
       if (fabs(it) < 1e-7){
@@ -131,8 +137,8 @@ void DEV(){
 
     double st= clock();
 
-    //PCNML_FAST(matpart, camera, &result);
-    PCNML_ICIP(range_image, camera, result);
+    PCNML_FAST(matpart, camera, &result);
+    //PCNML_ICIP(range_image, camera, result);
     //PCNML2(range_image, camera, R_MEDIAN_FAST_4_8, &result);
     //PCNML_FAST()
 
@@ -160,7 +166,6 @@ void DEV(){
     delete lppp;
   } //end of: for (int i = 1; i <= n; ++ i){
 
-  fclose(f);
 }
 
 
@@ -410,7 +415,8 @@ void TEST(std::string path, int K){
 
 int main(int argc, char* argv[]){
 
-  //DEV();
+  DEV();
+  return 0;
   //TEST();
   //start_from = atoi(argv[2]);
   //TEST(argv[1], 10);

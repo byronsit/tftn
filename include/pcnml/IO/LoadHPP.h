@@ -106,6 +106,25 @@ class LoadHPP {
     return mat;
   }
 
+  //读取深度图，格式是png图片格式
+  cv::Mat LoadDepthImagePng(const std::string &path, const size_t width = 640,
+                            const size_t height = 480){
+    //cv::Mat mat(cv::Size(width, height), CV_32FC1);
+    cv::Mat mat = cv::imread(path, 0);
+    std::cout<<mat.size()<<std::endl;
+    std::cout<<mat.channels()<<std::endl;
+    std::cout<<mat.type() << std::endl;
+    cv::Mat mat2(mat.size(), CV_32FC1);
+    for (int i = 0; i < mat2.size().width * mat2.size().height; ++ i){
+      mat2.at<float>(i) = mat.at<uint8_t>(i)/255.0;
+    }
+
+   // cv::imshow("a",mat2);
+   // cv::waitKey(-1);
+   // exit(-1);
+    return mat2;
+  }
+
   /**
    * @brief 设置相机内参
    * 就驶入正常的一个内参矩阵就行了*/
